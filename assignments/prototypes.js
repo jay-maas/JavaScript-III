@@ -58,6 +58,7 @@ const Humanoid = function(humandoidElements) {
   this.team = humandoidElements.team;
   this.weapons = humandoidElements.weapons;
   this.language = humandoidElements.language;
+  this.attack = humandoidElements.attack;
 };
 
 Humanoid.prototype = Object.create(CharacterStats.prototype);
@@ -65,7 +66,6 @@ Humanoid.prototype = Object.create(CharacterStats.prototype);
 Humanoid.prototype.greet = function() {
   return `${this.name} offers a greeting in ${this.language}.`;
 };
-
 
 
 
@@ -85,33 +85,29 @@ const Hero = function(heroElements) {
   Humanoid.call(this, heroElements);
   this.specialBonus = heroElements.specialBonus;
   this.specialBonusName = heroElements.specialBonusName;
+  this.specialItem =  heroElements.specialItem;
 };
 
 Hero.prototype = Object.create(Humanoid.prototype);
 
+Hero.prototype.drink = function() {
+  this.healthPoints = this.healthPoints * 1.2;
+  this.specialBonus = this.specialBonus * 2;
+  return `${this.name} drinks ${knight.specialItem}.`;
+};
+
 Hero.prototype.activateSpecial = function() {
-  attackDamage = warlock.healthPoints - this.specialBonus;
-  if (attackDamage > 0) {
-    console.log(
-      `${warlock.name} has been hurt by ${knight.name}'s ${
-        knight.specialBonusName
-      }, but still LIVES!`
-    );
-  } else {
-    console.log(
-      `${warlock.name} has been defeated by ${knight.name} using ${
-        knight.specialBonusName
-      }. Long live the King!`
-    );
-  }
-  return `${this.name} has activated their ${this.specialBonusName} causing  ${
-    warlock.name
-  } to have their health reduced by ${this.specialBonus}. `;
+  warlock.healthPoints = warlock.healthPoints - this.specialBonus;
+  if (warlock.healthPoints > 0) {
+    console.log(`${warlock.name} has been hurt by ${knight.name}'s ${knight.specialBonusName}, but still LIVES!`);
+  } else {console.log(`${warlock.name} has been defeated by ${knight.name} using ${knight.specialBonusName}. Long live the King!`);
+}
+  return `${this.name}'s '${this.specialBonusName}' caused ${this.specialBonus} damage to ${warlock.name}. `;
 };
 
 /*
   === Villian ===
-  * Special Bonus(%) & Special Bonus Name
+  * Special Bonus & Special Bonus Name
   * activateSpecial() // prototype method -> does some math and maybe a cool if else statement!
   * should inherit from Humanoid
 */
@@ -119,6 +115,7 @@ const Villain = function(villainElements) {
   Humanoid.call(this, villainElements);
   this.specialBonus = villainElements.specialBonus;
   this.specialBonusName = villainElements.specialBonusName;
+  this.specialItem =  villainElements.specialItem;
 };
 
 Villain.prototype = Object.create(Humanoid.prototype);
@@ -127,14 +124,31 @@ Villain.prototype.disrespect = function() {
   return `${this.name} spits on the ground and mocks ${knight.name}'s haircut.`;
 };
 
+Villain.prototype.smoke = function() {
+  this.healthPoints = this.healthPoints - 5;
+  if (this.healthPoints <= 0) {
+    return `${this.name} have been consumed by their addiction.`;
+  } else {
+    this.specialBonus = this.specialBonus * 1.2;
+    return `${this.name} pulls out their ${warlock.specialItem}. Power flows from the Underworld!`;
+  }
+};
+
+Villain.prototype.ritual = function() {
+  this.healthPoints = this.healthPoints + 30;
+  return `${this.name} chants in ${this.language[1]} while shadows surround them.`;
+};
+
 Villain.prototype.activateSpecial = function() {
   if (this.healthPoints < this.specialBonus) {
-    return `${this.name} have killed themselves using ${this.specialBonusName}.`
+    console.log(`${this.name} have killed themselves using ${this.specialBonusName}.`);
   } else {
-    attackDamage = knight.healthPoints - this.specialBonus;
-    if (attackDamage > 0) {
-      return `${knight.name} has been hurt by ${warlock.name}'s ${warlock.specialBonusName}, but still endures the pain to fight for good!`
-    } else { return `${knight.name} has been defeated by ${warlock.name} using ${warlock.specialBonusName}. Long live the evil ${warlock.name}!`}
+    knight.healthPoints = knight.healthPoints - this.specialBonus;
+    if (knight.healthPoints > 0) {
+      console.log(`${knight.name} has been hurt by ${warlock.name}'s ${warlock.specialBonusName}, but still endures the pain to fight for good!`);
+    } else { console.log(`${knight.name} has been defeated by ${warlock.name} using ${warlock.specialBonusName}. Long live the evil ${warlock.name}!`);
+  }
+  return `${this.name}'s '${this.specialBonusName}' caused ${this.specialBonus} damage to ${knight.name}. `;
 }
 };
 
@@ -153,9 +167,10 @@ const knight = new Hero({
   name: "Sir Lord Dragon Teeth",
   team: "High kingdom",
   weapons: ["Wyvern Banishing Bow", "Greatsword of High Kingdom"],
-  language: ["Common Tongue", "Shadow Speak"],
+  language: ["Common Tongue", " Shadow Speak"],
   specialBonus: 10,
-  specialBonusName: "Ultimate Strike for the King"
+  specialBonusName: "Ultimate Strike for the King",
+  specialItem: "Golden Mead of the Gods"
 });
 
 const warlock = new Villain({
@@ -171,7 +186,8 @@ const warlock = new Villain({
   weapons: ["Occult Staff of Reaping", "Summoning Book of Underworld", "Robes of Fire", "Circlet of Power", "Rings of Torment"],
   language: ["Common Tongue", "Shadow Speak", "Wyvern Tongue", "Snake Speak"],
   specialBonus: 50,
-  specialBonusName: "Sacrificial Summonings"
+  specialBonusName: "Sacrificial Summonings",
+  specialItem: "Astral Pipe"
 });
 
 
@@ -234,5 +250,8 @@ console.log(swordsman.destroy()); // Sir Mustachio was removed from the game.
 // * Give the Hero and Villains different methods that could be used to remove health points from objects which could result in destruction if health gets to 0 or drops below 0;
 // * Create two new objects, one a villain and one a hero and fight it out with methods!
 
-console.log
-console.log(warlock.activateSpecial());
+const welcome = function() {
+  console.log(
+    `Hello. Welcome to the land of JavaScriptia. An evil warlock has been troubling these lands. His name is ${warlock.name}. `
+  )
+}
