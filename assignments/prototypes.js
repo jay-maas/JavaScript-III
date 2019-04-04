@@ -79,6 +79,21 @@ Humanoid.prototype.basicAttack = function (attacker, target, whichItem) {
   return `${this.name} has attacked ${target.name} with their ${this.weapons[whichItem]} for ${this.attack} damage.`;
 }
 
+Humanoid.prototype.activateSpecial = function(attacker,target) {
+  target.healthPoints = target.healthPoints - attacker.specialBonus;
+  deadORalive(attacker,target);
+  if (target.healthPoints > 0) {
+    return `${target.name} has been hurt by ${attacker.name}'s ${attacker.specialBonusName}, but still endures the pain to fight!`;
+  } else { return `${target.name} has been defeated by ${attacker.name}.`;
+}
+};
+
+const deadORalive = function(attacker,target) {
+  if (target.healthPoints > 0) {
+    console.log(`${target.name} has been hurt by ${attacker.name}, but still endures the pain to fight!`);
+  } else { console.log(`${target.name} has been defeated by ${attacker.name}.`);
+}
+};
 
 
 /*
@@ -109,10 +124,6 @@ Hero.prototype.drink = function() {
   return `${this.name} drinks ${this.specialItem}. Blessings invigorate our Hero!`;
 };
 
-Hero.prototype.activateSpecial = function(attacker,target) {
-  target.healthPoints = target.healthPoints - attacker.specialBonus;
-  deadORalive(attacker,target);
-};
 
 /*
   === Villian ===
@@ -130,6 +141,7 @@ const Villain = function(villainElements) {
 Villain.prototype = Object.create(Humanoid.prototype);
 
 Villain.prototype.disrespect = function(target) {
+  this.healthPoints = this.healthPoints + 2;
   return `${this.name} spits on the ground and mocks ${target.name}'s haircut.`;
 };
 
@@ -149,28 +161,16 @@ Villain.prototype.ritual = function() {
   return `${this.name} chants in ${this.language[1]} while shadows surround them.`;
 };
 
+
 Villain.prototype.activateSpecial = function(attacker,target) {
   attacker.healthPoints = attacker.healthPoints - (attacker.specialBonus/2);
-  
-  const deadORaliveVillSpec = function(attacker,target) {
-    console.log(`${attacker.name}'s ${attacker.specialBonusName} caused ${attacker.specialBonus} damage to ${target.name}. `);
-    if (this.healthPoints < attacker.specialBonus) {
-      console.log(`${attacker.name} have killed themselves using ${attacker.specialBonusName}.`);
+  if (attacker.healthPoints <= 0) {
+      return `${attacker.name} have killed themselves using ${attacker.specialBonusName}.`;
     } else {
       target.healthPoints = target.healthPoints - attacker.specialBonus;
       deadORalive(attacker,target);
     }
-  };
-  deadORaliveVillSpec(attacker,target);
 };
-
-
-const deadORalive = function(attacker,target) {
-  if (target.healthPoints > 0) {
-    console.log(`${target.name} has been hurt by ${attacker.name}, but still endures the pain to fight!`);
-  } else { console.log(`${target.name} has been defeated by ${attacker.name}. Long live the evil ${attacker.name}!`);
-}};
-
 
 // Test you work by un-commenting these 3 objects and the list of console logs below:
 
@@ -308,7 +308,10 @@ const ourJourneyBegins = function() {
 }
 
 const finalScene = function() {
-  finalBattle();
+  while ( knight.healthPoints > 0 && warlock.healthPoints > 0) {
+    finalBattle();
+  }
+  
 }
 
 
@@ -347,43 +350,115 @@ let battleSequence = function() {
 }
 
 let finalBattle = function() {
-while (knight.healthPoints > 0 && warlock.healthPoints > 0) {
+  let knightBattleFunctions = [fn1, fn2, fn3, fn4, fn5, fn6, fn7, fn8, fn9, fn10];
+ 
+    function fn1() {
+      console.log(knight.drink());
+    }
+    function fn2() {
+      console.log(knight.drink());
+    }
+    function fn3() {
+      console.log(knight.battleCry());
+    }
+    function fn4() {
+      console.log(knight.battleCry());
+    }
+    function fn5() {
+      console.log(knight.basicAttack(knight, warlock, 0));
+    }
+    function fn6() {
+      console.log(knight.basicAttack(knight, warlock, 0));
+    }
+    function fn7() {
+      console.log(knight.activateSpecial(knight, warlock));
+    }
+    function fn8() {
+      console.log(knight.activateSpecial(knight, warlock));
+    }
+    function fn9() {
+      console.log(knight.activateSpecial(knight, warlock));
+    }
+    function fn10() {
+      console.log(knight.activateSpecial(knight, warlock));
+    }
+
+    function randomNumber(n) {
+      return Math.floor( Math.random() * n );
+    }
+    
   if (knight.healthPoints > 0) {
-    
-    if (knight.specialBonus < 30) {
-      console.log(knight.drink());
-      console.log(knight.battleCry());
-      knight.activateSpecial(knight, warlock);
-      
-    } else (knight.specialBonus < 50); {
-      console.log(knight.battleCry());
-      console.log(knight.drink());
-      knight.activateSpecial(knight, warlock);
-    }
-    
-  }
-  
-  if (warlock.healthPoints > 0) {
-    if (warlock.healthPoints > 50) {
-      warlock.activateSpecial(warlock, knight);
+    console.log(`K turn`);
+    console.log(knight.healthPoints, knight.specialBonus, knight.attack);
+    knightBattleFunctions[ randomNumber( knightBattleFunctions.length ) ]();
+    console.log(warlock.healthPoints, warlock.specialBonus, warlock.attack);
+    if (warlock.healthPoints > 30) {
+      console.log(knight.healthPoints, knight.specialBonus, knight.attack);
+      console.log(warlock.healthPoints, warlock.specialBonus, warlock.attack);
+      knightBattleFunctions[ randomNumber( knightBattleFunctions.length ) ]();
+      console.log(knight.healthPoints, knight.specialBonus, knight.attack);
+      console.log(warlock.healthPoints, warlock.specialBonus, warlock.attack);
+      knightBattleFunctions[ randomNumber( knightBattleFunctions.length ) ]();
+    } else if (warlock.healthPoints > 0) {
+      knightBattleFunctions[ randomNumber( knightBattleFunctions.length ) ]();
     } else {
-      if (warlock.healthPoints > 10) {
-        console.log(warlock.disrespect(knight));  
-        console.log(warlock.basicAttack(warlock, knight, 0));
-        } else (warlock.healthPoints < 10); {
-        console.log(warlock.ritual());
-        console.log(warlock.smoke());
-        console.log(warlock.ritual());
-        }
+      console.log(`The realm is saved.`);
     }
+    
+  }
+  let  warlockBattleFunctions = [fn1, fn2, fn3, fn4, fn5, fn6, fn7, fn8, fn9, fn10];
+ 
+  function fn1() {
+    console.log(warlock.smoke());
+  }
+  function fn2() {
+    console.log(warlock.smoke());
+  }
+  function fn3() {
+    console.log(warlock.disrespect());
+  }
+  function fn4() {
+    console.log(warlock.disrespect());
+  }
+  function fn5() {
+    console.log(warlock.basicAttack(warlock, knight, 0));
+  }
+  function fn6() {
+    console.log(warlock.basicAttack(warlock, knight, 0));
+  }
+  function fn7() {
+    console.log(warlock.activateSpecial(warlock, knight));
+  }
+  function fn8() {
+    console.log(warlock.activateSpecial(warlock, knight));
+  }
+  function fn9() {
+    console.log(warlock.activateSpecial(warlock, knight));
+  }
+  function fn10() {
+    console.log(warlock.activateSpecial(warlock, knight));
   }
 
+  function randomNumber(n) {
+    return Math.floor( Math.random() * n );
   }
-
-  if (knight.healthPoints <= 0) {
-    console.log(`Our hero has died. Evil has triumphed. Only you can rewrite history.`);
-  } else {
-    console.log(`The warlock has been vanquished. FOR THE KING and KINGDOM!`);
+  if (knight.healthPoints > 0) {
+    console.log(`K turn`);
+    console.log(knight.healthPoints, knight.specialBonus, knight.attack);
+    warlockBattleFunctions[ randomNumber( warlockBattleFunctions.length ) ]();
+    console.log(warlock.healthPoints, warlock.specialBonus, warlock.attack);
+    if (warlock.healthPoints > 30) {
+      console.log(knight.healthPoints, knight.specialBonus, knight.attack);
+      console.log(warlock.healthPoints, warlock.specialBonus, warlock.attack);
+      knightBattleFunctions[ randomNumber( knightBattleFunctions.length ) ]();
+      console.log(knight.healthPoints, knight.specialBonus, knight.attack);
+      console.log(warlock.healthPoints, warlock.specialBonus, warlock.attack);
+      knightBattleFunctions[ randomNumber( knightBattleFunctions.length ) ]();
+    } else if (warlock.healthPoints > 0) {
+      knightBattleFunctions[ randomNumber( knightBattleFunctions.length ) ]();
+    } else {
+      console.log(`The realm is saved.`);
+    }
   }
 }
 
