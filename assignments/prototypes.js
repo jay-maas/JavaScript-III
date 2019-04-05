@@ -70,27 +70,27 @@ Humanoid.prototype.greet = function(target) {
 
 Humanoid.prototype.battleCry = function() {
   this.attack = this.attack + 1;
-  return `${this.name} yells 'FOR THE KING!'`;
+  return `Character:${this.name} HP:${this.healthPoints} ATK:${this.attack} SB:${this.specialBonus} - ${this.name} yells 'FOR THE KING!'`;
 };
 
 Humanoid.prototype.basicAttack = function (attacker, target, whichItem) {
   target.healthPoints = target.healthPoints - this.attack;
   deadORalive(attacker,target);
-  return `${this.name} has attacked ${target.name} with their ${this.weapons[whichItem]} for ${this.attack} damage.`;
+  return `Character:${this.name} HP:${this.healthPoints} ATK:${this.attack} SB:${this.specialBonus} - ${this.name} has attacked ${target.name}:(HP${target.healthPoints}) with their ${this.weapons[whichItem]} for ${this.attack} damage.`;
 }
 
 Humanoid.prototype.activateSpecial = function(attacker,target) {
   target.healthPoints = target.healthPoints - attacker.specialBonus;
   deadORalive(attacker,target);
   if (target.healthPoints > 0) {
-    return `${target.name} has been hurt by ${attacker.name}'s ${attacker.specialBonusName}, but still endures the pain to fight!`;
+    return `Character:${attacker.name} HP:${attacker.healthPoints} ATK:${attacker.attack} SB:${attacker.specialBonus} - ${target.name}:(HP${target.healthPoints}) has been hurt by ${attacker.name}'s ${attacker.specialBonusName}!`;
   } else { return `${target.name} has been defeated by ${attacker.name}.`;
 }
 };
 
 const deadORalive = function(attacker,target) {
   if (target.healthPoints > 0) {
-    console.log(`${target.name} has been hurt by ${attacker.name}, but still endures the pain to fight!`);
+    console.log(`${target.name}:(HP${target.healthPoints}) has been hurt by ${attacker.name}, but still endures the pain to fight!`);
   } else { console.log(`${target.name} has been defeated by ${attacker.name}.`);
 }
 };
@@ -121,7 +121,7 @@ Hero.prototype.drink = function() {
   this.healthPoints = this.healthPoints * 1.2;
   this.specialBonus = this.specialBonus * 2;
   this.attack = this.attack + this.attack/2;
-  return `${this.name} drinks ${this.specialItem}. Blessings invigorate our Hero!`;
+  return `Character:${this.name} HP:${this.healthPoints} ATK:${this.attack} SB:${this.specialBonus} - ${this.name} drinks ${this.specialItem}. Blessings invigorate our Hero!`;
 };
 
 
@@ -142,34 +142,36 @@ Villain.prototype = Object.create(Humanoid.prototype);
 
 Villain.prototype.disrespect = function(target) {
   this.healthPoints = this.healthPoints + 2;
-  return `${this.name} spits on the ground and mocks ${target.name}'s haircut.`;
+  return `Character:${this.name} HP:${this.healthPoints} ATK:${this.attack} SB:${this.specialBonus} - ${this.name} spits on the ground and mocks ${target.name}.`;
 };
 
 Villain.prototype.smoke = function() {
   this.healthPoints = this.healthPoints - 5;
   if (this.healthPoints <= 0) {
-    return `${this.name} have been consumed by their addiction.`;
+    return `Character:${this.name} HP:${this.healthPoints} ATK:${this.attack} SB:${this.specialBonus} - ${this.name} have been consumed by their addiction.`;
   } else {
     this.specialBonus = this.specialBonus * 1.2;
-    return `${this.name} pulls out their ${this.specialItem}. Power flows from the Underworld!`;
+    return `Character:${this.name} HP:${this.healthPoints} ATK:${this.attack} SB:${this.specialBonus} - ${this.name} pulls out their ${this.specialItem}. Power flows from the Underworld!`;
   }
 };
 
 Villain.prototype.ritual = function() {
   this.healthPoints = this.healthPoints + 10;
   this.attack = this.attack + 1;
-  return `${this.name} chants in ${this.language[1]} while shadows surround them.`;
+  return `Character:${this.name} HP:${this.healthPoints} ATK:${this.attack} SB:${this.specialBonus} - ${this.name} chants in ${this.language[1]} while shadows surround them.`;
 };
 
 
 Villain.prototype.activateSpecial = function(attacker,target) {
   attacker.healthPoints = attacker.healthPoints - (attacker.specialBonus/2);
   if (attacker.healthPoints <= 0) {
-      return `${attacker.name} have killed themselves using ${attacker.specialBonusName}.`;
+      return `Character:${attacker.name} HP:${attacker.healthPoints} ATK:${attacker.attack} SB:${attacker.specialBonus} - ${attacker.name} have killed themselves using ${attacker.specialBonusName}.`;
     } else {
       target.healthPoints = target.healthPoints - attacker.specialBonus;
       deadORalive(attacker,target);
+      console.log(`Character:${attacker.name} HP:${attacker.healthPoints} ATK:${attacker.attack} SB:${attacker.specialBonus} - ${target.name} has been badly damaged by ${attacker.name}'s ${attacker.specialBonusName}.`);
     }
+    
 };
 
 // Test you work by un-commenting these 3 objects and the list of console logs below:
@@ -308,9 +310,13 @@ const ourJourneyBegins = function() {
 }
 
 const finalScene = function() {
-  while ( knight.healthPoints > 0 && warlock.healthPoints > 0) {
+  while ( knight.healthPoints > 0 || warlock.healthPoints > 0) {
     finalBattle();
   }
+  console.log(`Awakening...${knight.name} open's his eyes. Frozen in place, mind racing, franticly breathing the hero sits upright in bed. He looks around and recognizes the decor.
+  The sweet smell wafting through the open windows looking down on to a city below. He stands and walks towards the balcony, shivering his terrors away. "Could that really have been
+  just a dream?". Pondering to himself now, leaning onto the railing questioning his own paranoia. He sees a scout team riding in the distance, and they are making haste for the 
+  guard tower positioned on the outskirts. A thought crawls into his head, "Could this be what I dreamt of, has the evil warlock ${warlock.name} struck down the group of warriors?"...`);
   
 }
 
@@ -350,37 +356,37 @@ let battleSequence = function() {
 }
 
 let finalBattle = function() {
-  let knightBattleFunctions = [fn1, fn2, fn3, fn4, fn5, fn6, fn7, fn8, fn9, fn10];
+  let knightBattleFunctions = [f1, f2, f3, f4, f5, f6, f7, f8, f9, f10];
  
-    function fn1() {
+    function f1() {
       console.log(knight.drink());
     }
-    function fn2() {
+    function f2() {
       console.log(knight.drink());
     }
-    function fn3() {
+    function f3() {
       console.log(knight.battleCry());
     }
-    function fn4() {
+    function f4() {
       console.log(knight.battleCry());
     }
-    function fn5() {
+    function f5() {
       console.log(knight.basicAttack(knight, warlock, 0));
     }
-    function fn6() {
+    function f6() {
       console.log(knight.basicAttack(knight, warlock, 0));
     }
-    function fn7() {
-      console.log(knight.activateSpecial(knight, warlock));
+    function f7() {
+      console.log(knight.basicAttack(knight, warlock, 0));
     }
-    function fn8() {
-      console.log(knight.activateSpecial(knight, warlock));
+    function f8() {
+      knight.activateSpecial(knight, warlock);
     }
-    function fn9() {
-      console.log(knight.activateSpecial(knight, warlock));
+    function f9() {
+      console.log(knight.basicAttack(knight, warlock, 0));
     }
-    function fn10() {
-      console.log(knight.activateSpecial(knight, warlock));
+    function f10() {
+      knight.activateSpecial(knight, warlock);
     }
 
     function randomNumber(n) {
@@ -388,16 +394,11 @@ let finalBattle = function() {
     }
     
   if (knight.healthPoints > 0) {
-    console.log(`K turn`);
-    console.log(knight.healthPoints, knight.specialBonus, knight.attack);
+    console.log(`Knight ************************************************************************************turn`);
+    
     knightBattleFunctions[ randomNumber( knightBattleFunctions.length ) ]();
-    console.log(warlock.healthPoints, warlock.specialBonus, warlock.attack);
     if (warlock.healthPoints > 30) {
-      console.log(knight.healthPoints, knight.specialBonus, knight.attack);
-      console.log(warlock.healthPoints, warlock.specialBonus, warlock.attack);
       knightBattleFunctions[ randomNumber( knightBattleFunctions.length ) ]();
-      console.log(knight.healthPoints, knight.specialBonus, knight.attack);
-      console.log(warlock.healthPoints, warlock.specialBonus, warlock.attack);
       knightBattleFunctions[ randomNumber( knightBattleFunctions.length ) ]();
     } else if (warlock.healthPoints > 0) {
       knightBattleFunctions[ randomNumber( knightBattleFunctions.length ) ]();
@@ -415,10 +416,10 @@ let finalBattle = function() {
     console.log(warlock.smoke());
   }
   function fn3() {
-    console.log(warlock.disrespect());
+    console.log(warlock.disrespect(knight));
   }
   function fn4() {
-    console.log(warlock.disrespect());
+    console.log(warlock.disrespect(knight));
   }
   function fn5() {
     console.log(warlock.basicAttack(warlock, knight, 0));
@@ -427,43 +428,48 @@ let finalBattle = function() {
     console.log(warlock.basicAttack(warlock, knight, 0));
   }
   function fn7() {
-    console.log(warlock.activateSpecial(warlock, knight));
+    warlock.activateSpecial(warlock, knight);
   }
   function fn8() {
-    console.log(warlock.activateSpecial(warlock, knight));
+    console.log(warlock.basicAttack(warlock, knight, 0));
   }
   function fn9() {
-    console.log(warlock.activateSpecial(warlock, knight));
+    console.log(warlock.basicAttack(warlock, knight, 0));
   }
   function fn10() {
-    console.log(warlock.activateSpecial(warlock, knight));
+    warlock.activateSpecial(warlock, knight);
   }
 
   function randomNumber(n) {
     return Math.floor( Math.random() * n );
   }
   if (knight.healthPoints > 0) {
-    console.log(`K turn`);
-    console.log(knight.healthPoints, knight.specialBonus, knight.attack);
+    console.log(`Warlock **************************************************************turn`);
     warlockBattleFunctions[ randomNumber( warlockBattleFunctions.length ) ]();
-    console.log(warlock.healthPoints, warlock.specialBonus, warlock.attack);
     if (warlock.healthPoints > 30) {
-      console.log(knight.healthPoints, knight.specialBonus, knight.attack);
-      console.log(warlock.healthPoints, warlock.specialBonus, warlock.attack);
-      knightBattleFunctions[ randomNumber( knightBattleFunctions.length ) ]();
-      console.log(knight.healthPoints, knight.specialBonus, knight.attack);
-      console.log(warlock.healthPoints, warlock.specialBonus, warlock.attack);
-      knightBattleFunctions[ randomNumber( knightBattleFunctions.length ) ]();
+      warlockBattleFunctions[ randomNumber( warlockBattleFunctions.length ) ]();
+      warlockBattleFunctions[ randomNumber( warlockBattleFunctions.length ) ]();
     } else if (warlock.healthPoints > 0) {
-      knightBattleFunctions[ randomNumber( knightBattleFunctions.length ) ]();
-    } else {
-      console.log(`The realm is saved.`);
-    }
-  }
+      warlockBattleFunctions[ randomNumber( warlockBattleFunctions.length ) ]();
+    } else if (warlock.healthPoints <= 0) {
+      warlock.healthPoints =  100;
+      warlock.attack = 25;
+      warlock.specialBonus = 50;
+      console.log(`The realm is saved. Or is it? ${knight.name} celebrates! Hoisting his ${knight.specialItem} shouting "For the King and Glory!". 
+      Shadows stir all around him. A dark pit forms upon the ground, he looks to find ${warlock.name}'s body. Absent, his mind scratches to reason and comprehend,
+      before...
+      
+      "You thought it would be this easy, you were wrong." A deep, ominous voice whispers, "You will be in my world now, the Underworld. Only you could have freed me of my mortal body. I have prepared for this,
+      witness my true form!"`);
+    } else if (knight.healthPoints<= 0){console.log(`Awakening...${knight.name} open's his eyes. Frozen in place, mind racing, franticly breathing the hero sits upright in bed. He looks around and recognizes the decor.
+    The sweet smell wafting through the open windows looking down on to a city below. He stands and walks towards the balcony, shivering his terrors away. "Could that really have been
+    just a dream?". Pondering to himself now, leaning onto the railing questioning his own paranoia. He sees a scout team riding in the distance, and they are making haste for the 
+    guard tower positioned on the outskirts. A thought crawls into his head, "Could this be what I dreamt of, has the evil warlock ${warlock.name} struck down the group of warriors?"...`);}
+  }  
 }
 
-//welcome();
-//ourJourneyBegins();
+welcome();
+ourJourneyBegins();
 finalScene();
 
 
