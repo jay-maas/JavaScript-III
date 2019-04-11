@@ -263,6 +263,7 @@ const archer = new Humanoid({
   attackName: "Precise Strike"
 });
 
+console.log(mage.takeDamage()); // Bruce took damage.
 /*
 console.log(mage.createdAt); // Today's date
 console.log(archer.dimensions); // { length: 1, width: 2, height: 4 }
@@ -468,9 +469,9 @@ let finalBattle = function() {
   }  
 }
 
-welcome();
-ourJourneyBegins();
-finalScene();
+// welcome();
+// ourJourneyBegins();
+// finalScene();
 
 
 
